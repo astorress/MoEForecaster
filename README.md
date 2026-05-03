@@ -43,13 +43,13 @@ La demanda presenta **múltiples patrones simultáneos**:
 
 ### Solución: Mixture of Experts (MoE)
 
-Un pronóstico adaptativo que:
+Un pronóstico que:
 
 1. **Identifica dominios** mediante clustering (perfiles diarios × perfiles semanales)
 2. **Especifica expertos** — un modelo optimizado por dominio
 3. **asignación dinámica de expertos** — elige el experto más apropiado según el contexto actual
 
-**Resultado:** Mayor precisión en escenarios complejos (feriados, anomalías, cambios de patrón).
+**Resultado:** Mayor precisión en escenarios complejos (festivos, comportamientos anómalos, cambios de patrón).
 
 ---
 
@@ -135,12 +135,11 @@ Un pronóstico adaptativo que:
 ## 📁 Estructura del Proyecto
 
 ```
-metodologia_moe/
+moeforecaster/
 ├── README.md                          ← Este archivo
 ├── RESUMEN_NOTEBOOKS.md               ← Descripción detallada de cada notebook
 │
 ├── data/                             ← Data utilizada
-│   ├── classifiers/
 │   ├── clustering/
 │   ├── processed/
 │   └── raw/
@@ -280,8 +279,8 @@ jupyterlab>=4.0.0
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/usuario/metodologia_moe.git
-cd metodologia_moe
+git clone https://github.com/astorress/MoEForecaster.git
+cd MoEForecaster
 
 # 2. Crear ambiente virtual (recomendado)
 python3.12 -m venv venv
@@ -298,7 +297,7 @@ jupyter notebook notebooks/
 
 ```python
 # En la primera celda de Colab:
-!pip install -q -r https://raw.githubusercontent.com/usuario/metodologia_moe/main/requirements.txt
+!pip install -q -r https://raw.githubusercontent.com/astorress/MoEForecaster/main/requirements.txt
 
 # Los notebooks están optimizados para ejecutarse en Colab con GPU
 # Habilita GPU: Menú > Entorno de ejecución > Cambiar tipo de entorno > GPU
@@ -351,47 +350,67 @@ tqdm>=4.66.0
 ### Opción 1: Ejecutar el Pipeline Completo (Recomendado)
 
 ```bash
-# Navega a la carpeta de notebooks
-cd notebooks/
+# Navega a la carpeta del proyecto
+cd moeforecaster
 
 # Abre Jupyter
 jupyter notebook
 
 # Ejecuta los notebooks en orden:
-# 01_data_acquisition.ipynb → 02_preprocessing.ipynb → ... → 10_benchmark_comparison.ipynb
+# 01_data_acquisition.ipynb → 02_preprocessing.ipynb → ... → 09_benchmark_comparison.ipynb
 
-# Tiempo total estimado: 4-6 horas (depende de tu máquina)
+# Tiempo total estimado: 4-6 horas en Google Colab con GPU Tesla T4
+# Desglose aproximado:
+# - 01 Adquisición: 5 min
+# - 02 Preprocesamiento: 10 min
+# - 03 Clustering: 15 min
+# - 04-05 Clasificadores + Expertos: 1h
+# - 06-07 Gating + HPO: 2h
+# - 08 Ensamble: 30 min
+# - 09 Benchmark: 1h
 ```
 
-### Opción 2: Usar el Modelo Entrenado (Rápido)
+### Opción 2: Ejecutar Notebooks Individuales
 
-```python
-import pickle
-import pandas as pd
-
-# Cargar modelo entrenado
-with open('models/production/moe_forecaster.pkl', 'rb') as f:
-    moe = pickle.load(f)
-
-# Cargar últimos datos
-features = pd.read_parquet('data/processed/features.parquet')
-
-# Pronóstico 168h (1 semana)
-forecast = moe.predict(h=168)
-
-# Obtener pesos de expertos
-weights = moe.get_expert_weights()
-
-print(f"Pronóstico MAE: {forecast['mae']:.2f} kWh")
-print(f"Expertos asignados:\n{weights}")
-```
-
-### Opción 3: Ejecutar Solo Notebook Específico
+Para ejecutar solo ciertos notebooks sin correr todo el pipeline:
 
 ```bash
-# Ej: Ejecutar solo evaluación sin reentrenar modelos
-jupyter notebook notebooks/09_evaluation.ipynb
+# Ej: Solo análisis de clustering
+jupyter notebook notebooks/03_clustering.ipynb
+
+# Ej: Solo evaluación final
+jupyter notebook notebooks/09_benchmark_comparison.ipynb
 ```
+
+**Nota:** Los notebooks están diseñados para ejecutarse secuencialmente. Si ejecutas uno sin sus dependencias, necesitarás que los archivos intermedios (datos, modelos) existan en sus ubicaciones esperadas.
+
+### Opción 3: Ejecutar en Google Colab (Recomendado para principiantes)
+
+```python
+# 1. Abre https://colab.research.google.com
+# 2. Nueva celda:
+!git clone https://github.com/usuario/moeforecaster.git
+%cd moeforecaster
+
+# 3. Instala dependencias:
+!pip install -q -r requirements.txt
+
+# 4. Abre el notebook que quieras:
+from IPython.display import IFrame
+IFrame('notebooks/01_data_acquisition.ipynb', 800, 600)
+
+# 5. Habilita GPU:
+# Menú > Entorno de ejecución > Cambiar tipo de entorno > GPU
+```
+
+### Después de la Ejecución
+
+Una vez completados los notebooks, se generarán:
+
+- **data/raw/** — Datos descargados de API SINERGOX
+- **data/processed/** — Features ingenieras (52,608 × 39)
+- **models/\*** — Modelos entrenados (clasificadores, expertos, gating)
+- **results/** — Visualizaciones y reportes (100+ gráficos y CSVs)
 
 ---
 
@@ -406,7 +425,7 @@ Para más información, consulta:
 
 ## 🤝 Contribuciones
 
-Este proyecto es de código abierto. Para contribuir:
+Para contribuir:
 
 1. Fork el repositorio
 2. Crea una rama (`git checkout -b feature/mejora`)
@@ -421,7 +440,7 @@ Este proyecto es de código abierto. Para contribuir:
 **Sebastián Torres**
 
 - Email: [anderson.torress@udea.edu.co](mailto:anderson.torress@udea.edu.co)
-- GitHub: [@usuario](https://github.com/astorress)
+- GitHub: [@astorress](https://github.com/astorress)
 
 ## 🔗 Enlaces Útiles
 
