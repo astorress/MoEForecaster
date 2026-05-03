@@ -442,11 +442,6 @@ Para contribuir:
 - Email: [anderson.torress@udea.edu.co](mailto:anderson.torress@udea.edu.co)
 - GitHub: [@astorress](https://github.com/astorress)
 
-## 🔗 Enlaces Útiles
-
-- [Documentación de XM](https://www.xm.com.co/)
-- [SIN - Operación del sistema](https://www.xm.com.co)
-
 ---
 
 **Última actualización:** 3 de mayo de 2026  
