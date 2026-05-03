@@ -408,7 +408,7 @@ IFrame('notebooks/01_data_acquisition.ipynb', 800, 600)
 Una vez completados los notebooks, se generarán:
 
 - **data/raw/** — Datos descargados de API SINERGOX
-- **data/processed/** — Features ingenieras (52,608 × 39)
+- **data/processed/** — Features ingenieras (52,608 × 29)
 - **models/\*** — Modelos entrenados (clasificadores, expertos, gating)
 - **results/** — Visualizaciones y reportes (100+ gráficos y CSVs)
 
