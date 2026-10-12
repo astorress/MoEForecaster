@@ -1,0 +1,42 @@
+# =============================================================================
+# MoE Demand Forecasting: notebook environment
+# Usage: make up (JupyterLab at http://localhost:8888) · make pipeline (run everything)
+#
+# The repository is mounted at /app. Artifacts go to /app/{data,models,results}
+# unless MOE_OUTPUT_ROOT is set; a folder outside the repository can be mounted
+# with OUTPUT_DIR (see the Makefile and README).
+# =============================================================================
+
+x-app: &app
+  build:
+    context: .
+    dockerfile: docker/Dockerfile
+  image: moe-forecaster:latest
+  working_dir: /app/notebooks
+  environment:
+    MOE_OUTPUT_ROOT: ${MOE_OUTPUT_ROOT:-}
+  volumes:
+    - .:/app
+    - ${OUTPUT_DIR:-./outputs}:/output
+
+services:
+  # JupyterLab to explore and run the notebooks interactively
+  jupyter:
+    <<: *app
+    container_name: moe-jupyter
+    ports:
+      - "${JUPYTER_PORT:-8888}:8888"
+    command: >
+      jupyter lab --ip=0.0.0.0 --port=8888 --no-browser --allow-root
+        --ServerApp.token='' --ServerApp.password='' --notebook-dir=/app
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8888/api')"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+    restart: unless-stopped
+
+  # One-off execution container ("tools" profile), used by make pipeline / make nb
+  runner:
+    <<: *app
+    profiles: ["tools"]

@@ -1,0 +1,16 @@
+# Conda environment for the MoE forecasting pipeline.
+#
+#   conda env create -f environment.yml
+#   conda activate moe-forecaster
+#   jupyter lab
+#
+# Python comes from conda; every library is installed with pip from
+# requirements.txt so that conda, pip/venv, Docker and Colab use the same pins.
+name: moe-forecaster
+channels:
+  - conda-forge
+dependencies:
+  - python=3.12
+  - pip
+  - pip:
+      - -r requirements.txt
