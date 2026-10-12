@@ -270,7 +270,7 @@ print(model.get_model_card())
 
 **Sebastián Torres**
 
-- Email: [anderson.torress@udea.edu.co](mailto:anderson.torress@udea.edu.co)
+- Email: [sebastiantorres8800@gmail.com](mailto:sebastiantorres8800@gmail.com)
 - GitHub: [@astorress](https://github.com/astorress)
 
 ---
